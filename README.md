@@ -122,6 +122,21 @@ Raspberry Pi 5 Setup
     make start
     ```
 
+- Optionally configure WLAN:
+
+    ```
+    sudo raspi-config nonint do_wifi_country "<cc>"
+    sudo raspi-config nonint do_wifi_ssid_passphrase "<ssid>" "<passphrase>"
+    ```
+
+- Optionally configure fixed IP addresses on Ethernet interface:
+
+    ```
+    sudo nmcli con mod "Wired connection 1" ipv4.addresses 10.1.0.94/24 \
+        ipv4.gateway 10.1.0.1 ipv4.dns 10.1.0.1 ipv4.method manual
+    sudo systemctl restart NetworkManager
+    ```
+
 License
 -------
 
