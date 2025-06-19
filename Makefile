@@ -28,6 +28,9 @@ uninstall:
 start:
 	sudo systemctl start --no-pager --no-block busylight.service
 
+restart:
+	sudo systemctl restart --no-pager --no-block busylight.service
+
 stop:
 	sudo systemctl stop busylight.service
 
