@@ -111,6 +111,14 @@ Raspberry Pi 5 Setup
     | arm_freq=720
     ```
 
+- Reduce services of Raspberry Pi OS:
+
+    ```
+    sudo systemctl disable avahi-daemon
+    sudo systemctl disable bluetooth.service
+    sudo systemctl disable ModemManager
+    ```
+
 - Install the latest Node.js 24 version:
 
     ```
