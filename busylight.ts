@@ -91,7 +91,7 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
     const devices = BusyLight.devices()
     if (devices.length === 0) {
         log("ERROR", "no busylight USB device found")
-	process.exit(1)
+        process.exit(1)
     }
     for (const device of devices)
         log("INFO", `found busylight device: serial: ${device.serialNumber}, model: ${device.manufacturer} ${device.product}`)
@@ -99,39 +99,39 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
     /*  map devices  */
     let busylight: { [ name: string ]: BusyLight } = {}
     if (typeof args.device === "object" && args.device instanceof Array && args.device.length > 0) {
-	/*  identify device by name  */
+        /*  identify device by name  */
         for (const spec of args.device) {
-	    const m = String(spec).match(/^(.+?):(.+)$/)
-	    if (m === null)
+            const m = String(spec).match(/^(.+?):(.+)$/)
+            if (m === null)
                 throw new Error(`invalid device specification: ${spec}`)
             const [ , id, serial ] = m
-	    let found = false
-	    for (const device of devices) {
-	        if (device.serialNumber === serial) {
+            let found = false
+            for (const device of devices) {
+                if (device.serialNumber === serial) {
                     log("INFO", `using busylight device: id: ${id}, serial: ${device.serialNumber}`)
-		    busylight[id] = new BusyLight(device)
-		    found = true
-		    break
-	        }
-	    }
-	    if (!found)
+                    busylight[id] = new BusyLight(device)
+                    found = true
+                    break
+                }
+            }
+            if (!found)
                 throw new Error(`device not found: ${serial}`)
         }
     }
     else {
-	/*  identify device by serial number */
+        /*  identify device by serial number */
         for (const device of devices) {
-	    const uuid = new UUID(3, "ns:URL", `busylight:${device.serialNumber}`)
-	    const id = uuid.fold(3).map((d) => d.toString(16).padStart(2, "0").toUpperCase()).join("")
-	    log("INFO", `using busylight device: id: ${id}, serial: ${device.serialNumber}`)
-	    busylight[id] = new BusyLight(device)
+            const uuid = new UUID(3, "ns:URL", `busylight:${device.serialNumber}`)
+            const id = uuid.fold(3).map((d) => d.toString(16).padStart(2, "0").toUpperCase()).join("")
+            log("INFO", `using busylight device: id: ${id}, serial: ${device.serialNumber}`)
+            busylight[id] = new BusyLight(device)
         }
     }
 
     /*  connect to all devices  */
     for (const device of Object.keys(busylight)) {
         busylight[device].connect()
-	busylight[device].off()
+        busylight[device].off()
     }
 
     /*  global duration timer  */
@@ -195,35 +195,35 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
             if (toneId === -1)
                 toneId = 0
             const toneDuration = busylight[device].durations()[toneId]
-	    if (program.type === "steady") {
+            if (program.type === "steady") {
                 p.on  = 10 * (toneDuration / 100)
                 p.off = 0
-	    }
-	    else if (program.type === "blink") {
+            }
+            else if (program.type === "blink") {
                 p.on  = (toneDuration / 2) / 100
                 p.off = (toneDuration / 2) / 100
-	    }
+            }
             p.audio  = true
             p.tone   = toneId
             p.volume = 1 + Math.round(6 * program.volume)
         }
         busylight[device].program([ p ])
         intervalStart(device, ((p.on + p.off) * 100) * p.repeat, () => {
-	    busylight[device].program([ p ])
-       	})
-	timerStop(device)
-	if (program.duration > 0) {
+            busylight[device].program([ p ])
+        })
+        timerStop(device)
+        if (program.duration > 0) {
             timerStart(device, program.duration, () => {
                 intervalStop(device)
-		busylight[device].off()
-	    })
-	}
+                busylight[device].off()
+            })
+        }
     }
     const changeState = (device: string, state: string, type = "steady", duration = 0, quiet = false) => {
         log("INFO", `change: device: ${device}, state: ${state}, type: ${type}, duration: ${duration === 0 ? "none" : duration}`)
         if (state === "off") {
             intervalStop(device)
-	    timerStop(device)
+            timerStop(device)
             busylight[device].off()
         }
         else if (state === "ok") {
@@ -233,7 +233,7 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
                 duration:  duration,
                 tone:      "",
                 volume:    0
-	    })
+            })
         }
         else if (state === "info") {
             changeProgram(device, {
@@ -242,7 +242,7 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
                 duration:  duration,
                 tone:      "",
                 volume:    0
-	    })
+            })
         }
         else if (state === "warning") {
             changeProgram(device, {
@@ -251,7 +251,7 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
                 duration:  duration,
                 tone:      quiet ? "" : "Quiet",
                 volume:    quiet ? 0  : 0.5
-	    })
+            })
         }
         else if (state === "error") {
             changeProgram(device, {
@@ -260,16 +260,16 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
                 duration:  duration,
                 tone:      quiet ? "" : "Instant Message 3",
                 volume:    quiet ? 0  : 1.0
-	    })
+            })
         }
     }
    
     /*  establish HTTP/REST service endpoints  */
     log("INFO", `starting REST API: http://${args.httpAddr}:${args.httpPort}` +
-	`/<device>/{off,ok,info,warning,error}[/{steady,blink}[/{0,<duration>}[/quiet]]]`)
+        `/<device>/{off,ok,info,warning,error}[/{steady,blink}[/{0,<duration>}[/quiet]]]`)
     const server = new Server({
-	address: args.httpAddr,
-       	port:    args.httpPort
+        address: args.httpAddr,
+        port:    args.httpPort
     })
     server.route({
         method: "GET",
@@ -323,7 +323,7 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
         log("WARNING", `received ${signal} signal -- shutting down service`)
         for (const device of Object.keys(busylight)) {
             log("INFO", `reset busylight device: ${device}`)
-	    busylight[device].off()
+            busylight[device].off()
             busylight[device].disconnect()
             delete busylight[device]
         }

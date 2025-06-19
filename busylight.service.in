@@ -1,9 +1,13 @@
-#  /etc/systemd/user/busylight.service
+##
+##  busylight -- Control Kuando BusyLight through REST
+##  Copyright (c) 2025 Dr. Ralf S. Engelschall <rse@engelschall.com>
+##  Licensed under MIT license <https://spdx.org/licenses/MIT.html>
+##
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/home/studio/busylight/busylight.sh
+ExecStart=@basedir@/busylight.sh
 
 [Install]
 WantedBy=multi-user.target

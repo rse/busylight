@@ -1,4 +1,9 @@
 #!/bin/sh
+##
+##  busylight -- Control Kuando BusyLight through REST
+##  Copyright (c) 2025 Dr. Ralf S. Engelschall <rse@engelschall.com>
+##  Licensed under MIT license <https://spdx.org/licenses/MIT.html>
+##
 
 #   determine base directory
 case "$0" in
