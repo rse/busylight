@@ -37,3 +37,11 @@ stop:
 logs:
 	journalctl -f -u busylight
 
+seal:
+	sudo raspi-config nonint enable_overlayfs
+	sudo raspi-config nonint enable_bootro
+
+unseal:
+	sudo raspi-config nonint disable_overlayfs
+	sudo raspi-config nonint disable_bootro
+

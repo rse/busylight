@@ -82,6 +82,7 @@ Raspberry Pi 5 Setup
     ```
     sudo apt update
     sudo apt upgrade -y
+    sudo apt autoremove --purge
     ```
 
 - Install the essential tools:
