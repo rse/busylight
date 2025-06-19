@@ -15,7 +15,8 @@ Plenom A/S [Kuando Busylight](https://busylight.com/) devices.
 Internally it is based on a fork of the
 [Busylight library](https://github.com/yaddran/busylight) (version 1.0.12 as of 2022)
 in order to access the devices via USB from within Node.js. The **Busylight**
-REST service is intended to be run on a small control host, like a Raspberry Pi.
+REST service is intended to be run on a small control host, like a [Raspberry Pi](https://www.raspberrypi.com/),
+and accessed remotely from a control client like [Bitfocus Companion](https://bitfocus.io/companion).
 
 Installation
 ------------
@@ -66,7 +67,7 @@ curl http://127.0.0.1:8080/foo/warning/blink/4000
 Raspberry Pi 5 Setup
 --------------------
 
-- Purchase a Raspberry Pi 5 (most easily with an all-in-one kit
+- Purchase a [Raspberry Pi](https://www.raspberrypi.com/) (most easily with an all-in-one kit
   like the [GeeekPi Starter Kit für Raspberry Pi 5](https://www.amazon.de/dp/B0CSBVH8K9?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1)) and
   install "Raspberry Pi OS Lite" (based on Debian 12.10)
   as the operating system (OS) onto it with the
