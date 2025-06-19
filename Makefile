@@ -45,3 +45,13 @@ unseal:
 	sudo raspi-config nonint disable_bootro
 	sudo raspi-config nonint disable_overlayfs
 
+update:
+	$(MAKE) $(MFLAGS) stop
+	$(MAKE) $(MFLAGS) uninstall
+	$(MAKE) $(MFLAGS) distclean
+	git reset HEAD --hard
+	git pull
+	$(MAKE) $(MFLAGS) build
+	$(MAKE) $(MFLAGS) install
+	$(MAKE) $(MFLAGS) start
+
