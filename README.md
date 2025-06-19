@@ -138,6 +138,13 @@ Raspberry Pi 5 Setup
     sudo systemctl restart NetworkManager
     ```
 
+    You can revert back to DHCP later with:
+
+    ```
+    sudo nmcli con mod "Wired connection 1" ipv4.method auto
+    sudo systemctl restart NetworkManager
+    ```
+
 License
 -------
 
