@@ -221,6 +221,14 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
     }
     const changeState = (device: string, state: string, type = "steady", duration = 0, quiet = false) => {
         log("INFO", `change: device: ${device}, state: ${state}, type: ${type}, duration: ${duration === 0 ? "none" : duration}`)
+        if (busylight[device] === undefined) {
+            log("WARNING", `invalid requested device "${device}"`)
+            return
+        }
+        if (type.match(/^(?:steady|blink)$/) === null) {
+            log("WARNING", `invalid requested type "${type}"`)
+            return
+        }
         if (state === "off") {
             intervalStop(device)
             timerStop(device)
@@ -262,6 +270,8 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
                 volume:    quiet ? 0  : 1.0
             })
         }
+        else
+            log("WARNING", `invalid requested state "${state}"`)
     }
    
     /*  establish HTTP/REST service endpoints  */
