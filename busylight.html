@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<!--
+**
+**  busylight - Control Kuando BusyLight through REST
+**  Copyright (c) 2025 Dr. Ralf S. Engelschall <rse@engelschall.com>
+**  Licensed under MIT license <https://spdx.org/licenses/MIT.html>
+**
+-->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, minimum-scale=0.1, initial-scale=1.0, maximum-scale=10, user-scalable=no" />
+        <title>Busylight</title>
+        <style type="text/css">
+             html,
+             body {
+                 margin: 0;
+                 background-color: #999999;
+                 font-family: sans-serif;
+                 font-size: 1.5vw;
+             }
+             body {
+                 margin: auto;
+                 min-height: 100vh;
+                 display: flex;
+                 flex-direction: column;
+                 align-items: center;
+                 justify-content: center;
+             }
+             #dataForm {
+                 background-color: #f0f0f0;
+                 box-shadow: 0 0 1.0rem 0.1rem #666666;
+                 border-radius: 1rem;
+                 padding: 1rem 2rem;
+             }
+             label {
+                 display: inline-block;
+                 width: 5rem;
+                 font-size: 1rem;
+             }
+             input,
+             select,
+             button {
+                 box-sizing: content-box;
+                 width: 10rem;
+                 font-size: 1rem;
+                 margin: 0;
+                 padding: 0.2rem 0.4rem;
+                 outline: none;
+                 border-radius: 0.3rem;
+                 margin-bottom: 0.2rem;
+             }
+             input {
+                 background-color: #f0f0f0;
+                 border-top:    0.1rem solid #c0c0c0;
+                 border-left:   0.1rem solid #c0c0c0;
+                 border-right:  0.1rem solid #ffffff;
+                 border-bottom: 0.1rem solid #ffffff;
+             }
+             select,
+             button {
+                 background-color: #f0f0f0;
+                 border-top:    0.1rem solid #ffffff;
+                 border-left:   0.1rem solid #ffffff;
+                 border-right:  0.1rem solid #c0c0c0;
+                 border-bottom: 0.1rem solid #c0c0c0;
+             }
+             input:hover,
+             select:hover,
+             button:hover,
+             input:focus,
+             select:focus,
+             button:focus {
+                 background-color: #e0f0ff;
+                 color: #336699;
+             }
+             button {
+                 width: 15.4rem;
+             }
+        </style>
+        <script type="module">
+            document.addEventListener("DOMContentLoaded", async () => {
+                const select = document.getElementById("device")
+                const res = await fetch("/devices")
+                if (res.ok) {
+                    const devices = await res.json()
+                    devices.forEach((device) => {
+                        const option = document.createElement("option")
+                        option.value       = device
+                        option.textContent = device
+                        select.appendChild(option)
+                    })
+                }
+                const form = document.getElementById("dataForm")
+                form.addEventListener("submit", async (event) => {
+                    event.preventDefault()
+                    const formData = new FormData(form)
+                    const data = Object.fromEntries(formData.entries())
+                    await fetch(`/${data.device}/${data.state}/${data.type}/${data.duration}/${data.audio}`, { method: "GET" })
+                })
+            })
+        </script>
+    </head>
+    <body>
+        <form id="dataForm">
+            <h1>Busylight</h1>
+            <label for="device">Device:</label>
+            <select id="device" name="device">
+            </select>
+            <br/>
+            <label for="state">State:</label>
+            <select id="state" name="state">
+                <option value="off">Off (none)</option>
+                <option value="ok">OK (green)</option>
+                <option value="info">Info (blue)</option>
+                <option value="warning">Warning (yellow)</option>
+                <option value="error">Error (red)</option>
+            </select>
+            <br/>
+            <label for="type">Type:</label>
+            <select id="type" name="type">
+                <option value="steady">steady</option>
+                <option value="blink">blink</option>
+            </select>
+            <br/>
+            <label for="duration">Duration:</label>
+            <input id="duration" type="text" name="duration" placeholder="duration (ms)" value="0" required>
+            <br/>
+            <label for="audio">Audio:</label>
+            <select id="audio" name="audio">
+                <option value="quiet">quiet</option>
+                <option value="audio">audible</option>
+            </select>
+            <p/>
+            <button type="submit">APPLY STATE</button>
+        </form>
+    </body>
+</html>

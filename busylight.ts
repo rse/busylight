@@ -8,6 +8,7 @@
 import yargs          from "yargs"
 import * as HAPI      from "@hapi/hapi"
 import { Server }     from "@hapi/hapi"
+import Inert          from "@hapi/inert"
 import moment         from "moment"
 import chalk          from "chalk"
 import UUID           from "pure-uuid"
@@ -219,7 +220,7 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
             })
         }
     }
-    const changeState = (device: string, state: string, type = "steady", duration = 0, quiet = false) => {
+    const changeState = (device: string, state: string, type = "steady", duration = 0, audio = "audible") => {
         log("INFO", `change: device: ${device}, state: ${state}, type: ${type}, duration: ${duration === 0 ? "none" : duration}`)
         if (busylight[device] === undefined) {
             log("WARNING", `invalid requested device "${device}"`)
@@ -257,8 +258,8 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
                 rgb:       [ 0x99, 0x33, 0x00 ],
                 type:      type,
                 duration:  duration,
-                tone:      quiet ? "" : "Quiet",
-                volume:    quiet ? 0  : 0.5
+                tone:      audio === "audible" ? "Quiet" : "",
+                volume:    audio === "audible" ? 0.5 : 0
             })
         }
         else if (state === "error") {
@@ -266,8 +267,8 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
                 rgb:       [ 0xcc, 0x00, 0x00 ],
                 type:      type,
                 duration:  duration,
-                tone:      quiet ? "" : "Instant Message 3",
-                volume:    quiet ? 0  : 1.0
+                tone:      audio === "audible" ? "Instant Message 3" : "",
+                volume:    audio === "audible" ? 1.0 : 0
             })
         }
         else
@@ -281,9 +282,25 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
         address: args.httpAddr,
         port:    args.httpPort
     })
+    await server.register({ plugin: Inert })
     server.route({
         method: "GET",
-        path: "/{device}/{state}",
+        path:   "/",
+        handler: {
+            file: "./busylight.html"
+        }
+    })
+    server.route({
+        method: "GET",
+        path:   "/devices",
+        handler: async (req: HAPI.Request, h: HAPI.ResponseToolkit) => {
+            const devices = Object.keys(busylight)
+            return h.response(devices).code(200)
+        }
+    })
+    server.route({
+        method: "GET",
+        path:   "/{device}/{state}",
         handler: async (req: HAPI.Request, h: HAPI.ResponseToolkit) => {
             const device = req.params.device
             const state  = req.params.state
@@ -293,7 +310,7 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
     })
     server.route({
         method: "GET",
-        path: "/{device}/{state}/{type}",
+        path:   "/{device}/{state}/{type}",
         handler: async (req: HAPI.Request, h: HAPI.ResponseToolkit) => {
             const device = req.params.device
             const state  = req.params.state
@@ -304,7 +321,7 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
     })
     server.route({
         method: "GET",
-        path: "/{device}/{state}/{type}/{duration}",
+        path:   "/{device}/{state}/{type}/{duration}",
         handler: async (req: HAPI.Request, h: HAPI.ResponseToolkit) => {
             const device   = req.params.device
             const state    = req.params.state
@@ -316,13 +333,14 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
     })
     server.route({
         method: "GET",
-        path: "/{device}/{state}/{type}/{duration}/quiet",
+        path:   "/{device}/{state}/{type}/{duration}/{audio}",
         handler: async (req: HAPI.Request, h: HAPI.ResponseToolkit) => {
             const device   = req.params.device
             const state    = req.params.state
             const type     = req.params.type
             const duration = parseInt(req.params.duration)
-            changeState(device, state, type, duration, true)
+            const audio    = req.params.audio
+            changeState(device, state, type, duration, audio)
             return h.response().code(204)
         }
     })
