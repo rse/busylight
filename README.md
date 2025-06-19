@@ -1,4 +1,6 @@
 
+<img src="https://raw.githubusercontent.com/rse/busylight/master/screenshot-device.png" width="200" align="right" alt=""/>
+
 Busylight
 =========
 
@@ -17,6 +19,10 @@ Internally it is based on a fork of the
 in order to access the devices via USB from within Node.js. The **Busylight**
 REST service is intended to be run on a small control host, like a [Raspberry Pi](https://www.raspberrypi.com/),
 and accessed remotely from a control client like [Bitfocus Companion](https://bitfocus.io/companion).
+For convenience reasons, a minimalistic Web UI is provided at the root path of the REST service
+for interactively controlling the device.
+
+![screenshot](screenshot-webui.png)
 
 Installation
 ------------
