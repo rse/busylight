@@ -1,5 +1,5 @@
 
-<img src="https://raw.githubusercontent.com/rse/busylight/master/screenshot-device.png" width="200" align="right" alt=""/>
+<img src="https://raw.githubusercontent.com/rse/busylight/master/screenshot-device.png" width="150" align="right" alt=""/>
 
 Busylight
 =========
