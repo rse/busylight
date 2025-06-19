@@ -26,6 +26,7 @@ $ git clone https://github.com/rse/busylight
 $ make build
 $ make install
 $ make start
+$ make logs
 ```
 
 Usage
