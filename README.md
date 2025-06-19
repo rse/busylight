@@ -137,6 +137,13 @@ Raspberry Pi 5 Setup
     make start
     ```
 
+- Configure system for non-network booting into console mode:
+
+    ```
+    sudo raspi-config nonint do_boot_wait 0
+    sudo raspi-config nonint do_boot_behaviour B1
+    ```
+
 - Optionally configure WLAN:
 
     ```
