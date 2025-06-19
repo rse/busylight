@@ -1,0 +1,10 @@
+#  /etc/systemd/user/busylight.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/home/studio/busylight/busylight.sh
+
+[Install]
+WantedBy=multi-user.target
+

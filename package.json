@@ -1,0 +1,28 @@
+{
+    "name":             "busylight",
+    "version":          "0.0.0",
+    "description":      "Busylight Control",
+    "homepage":         "https://github.com/rse/busylight",
+    "license":          "ISC",
+    "author":           { "name": "Dr. Ralf S. Engelschall", "url": "mailto:rse@engelschall.com" },
+    "type":             "module",
+    "dependencies": {
+        "tsx":          "4.20.3",
+        "typescript":   "5.8.3",
+	"yargs":        "18.0.0",
+	"@hapi/hapi":   "21.4.0",
+        "@hapi/boom":   "10.0.1",
+        "joi":          "17.13.3",
+        "moment":       "2.30.1",
+        "chalk":        "5.4.1",
+        "node-hid":     "3.2.0",
+        "pure-uuid":    "1.8.1",
+        "@types/node":  "24.0.3",
+        "@types/yargs": "17.0.33"
+    },
+    "scripts": {
+        "lint":         "tsc --noEmit --project tsconfig.json",
+        "start":        "tsx busylight.ts",
+        "test":         "npm start -- -d 1:382492FF000051FF24FFFFFF2802FFFF7002FFFF -d 2:453092FF004071FF08FFFFFF8102FFFF9202FFFF"
+    }
+}
