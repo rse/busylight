@@ -83,6 +83,12 @@ Raspberry Pi 5 Setup
     sudo apt upgrade -y
     ```
 
+- Install the essential tools:
+
+    ```
+    sudo apt install -y vim bash git make
+    ```
+
 - Upgrade the Raspberry Pi 5 firmware to the latest version:
 
     ```
