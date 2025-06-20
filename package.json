@@ -1,7 +1,7 @@
 {
     "private":          true,
     "name":             "busylight",
-    "version":          "0.9.4",
+    "version":          "0.9.5",
     "description":      "Busylight Control",
     "homepage":         "https://github.com/rse/busylight",
     "license":          "ISC",
