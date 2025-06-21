@@ -148,6 +148,7 @@ Raspberry Pi 5 Setup
 - Optionally configure WLAN:
 
     ```
+    sudo nmcli radio wifi on
     sudo raspi-config nonint do_wifi_country "<cc>"
     sudo raspi-config nonint do_wifi_ssid_passphrase "<ssid>" "<passphrase>"
     ```
