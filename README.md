@@ -132,6 +132,7 @@ Raspberry Pi 5 Setup
     ```
     cd $HOME
     git clone https://github.com/rse/busylight
+    cd busylight
     make build
     make install
     make start
