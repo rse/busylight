@@ -267,7 +267,7 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
                 rgb:       [ 0xcc, 0x00, 0x00 ],
                 type:      type,
                 duration:  duration,
-                tone:      audio === "audible" ? "Instant Message 3" : "",
+                tone:      audio === "audible" ? "Quiet" : "",
                 volume:    audio === "audible" ? 1.0 : 0
             })
         }
