@@ -240,8 +240,8 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
                 rgb:       [ 0x00, 0x66, 0x00 ],
                 type:      type,
                 duration:  duration,
-                tone:      "",
-                volume:    0
+                tone:      audio === "audible" ? "Instant Message 2" : "",
+                volume:    audio === "audible" ? 0.5 : 0
             })
         }
         else if (state === "info") {
@@ -249,8 +249,8 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
                 rgb:       [ 0x00, 0x33, 0x99 ],
                 type:      type,
                 duration:  duration,
-                tone:      "",
-                volume:    0
+                tone:      audio === "audible" ? "Instant Message 2" : "",
+                volume:    audio === "audible" ? 0.5 : 0
             })
         }
         else if (state === "warning") {
