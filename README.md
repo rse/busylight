@@ -101,6 +101,7 @@ Raspberry Pi 5 Setup
 
     ```
     sudo rpi-update
+    sudo reboot
     ```
 
 - Underclock the Raspberry Pi 5 to reduce power consumption and heat:
