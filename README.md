@@ -97,7 +97,7 @@ Raspberry Pi 5 Setup
     sudo apt install -y vim bash git make
     ```
 
-- Upgrade the Raspberry Pi 5 firmware to the latest version:
+- Optionally upgrade the Raspberry Pi 5 firmware to the latest version:
 
     ```
     sudo rpi-update
