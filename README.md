@@ -79,14 +79,19 @@ up your favorite Raspberry Pi device. Then
 install the Busylight service with:
 
 ```
+#   enter writable filesystem
 sudo overlayfs-chroot
 sudo -u studio bash
+
+#   install Busylight service
 cd $HOME
 git clone https://github.com/rse/busylight
 cd busylight
 make build
 make install
 make start
+
+#   exit writable filesystem
 exit
 exit
 sudo reboot
@@ -95,11 +100,16 @@ sudo reboot
 You can later upgrade to the latest version at any time with:
   
 ```
+#   enter writable filesystem
 sudo overlayfs-chroot
 sudo -u studio bash
+
+#   upgrade Busylight service
 cd $HOME
 cd busylight
 make upgrade
+
+#   exit writable filesystem
 exit
 exit
 sudo reboot
