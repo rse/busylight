@@ -4,6 +4,8 @@
 ##  Licensed under MIT license <https://spdx.org/licenses/MIT.html>
 ##
 
+OS = `uname -s`
+
 all: build
 
 bootstrap:
@@ -19,23 +21,57 @@ distclean: clean
 	-rm -rf node_modules package-lock.json
 
 install:
-	sed -e "s;@basedir@;`pwd`;g" <busylight.service.in >busylight.service && \
-	sudo systemctl enable ./busylight.service
+	@echo "++ installing service"; \
+	if [ "${OS}" = "Linux" ]; then \
+	    sed -e "s;@basedir@;`pwd`;g" <busylight.service.in >busylight.service; \
+	    sudo systemctl enable ./busylight.service; \
+	elif [ "${OS}" = "Darwin" ]; then \
+	    sed -e "s;@basedir@;`pwd`;g" <busylight.plist.in >busylight.plist; \
+	    cp busylight.plist $$HOME/Library/LaunchAgents/com.engelschall.busylight.plist; \
+	    launchctl load -w $$HOME/Library/LaunchAgents/com.engelschall.busylight.plist; \
+	fi
 
 uninstall:
-	sudo systemctl disable busylight.service
+	@echo "++ uninstalling service"; \
+	if [ "${OS}" = "Linux" ]; then \
+	    sudo systemctl disable busylight.service; \
+	elif [ "${OS}" = "Darwin" ]; then \
+	    launchctl unload -w $$HOME/Library/LaunchAgents/com.engelschall.busylight.plist; \
+	    rm -f $$HOME/Library/LaunchAgents/com.engelschall.busylight.plist; \
+	fi
 
 start:
-	sudo systemctl start --no-pager --no-block busylight.service
+	@echo "++ starting service"; \
+	if [ "${OS}" = "Linux" ]; then \
+	    sudo systemctl start --no-pager --no-block busylight.service; \
+	elif [ "${OS}" = "Darwin" ]; then \
+	    launchctl start com.engelschall.busylight; \
+	fi
 
 restart:
-	sudo systemctl restart --no-pager --no-block busylight.service
+	@echo "++ restarting service"; \
+	if [ "${OS}" = "Linux" ]; then \
+	    sudo systemctl restart --no-pager --no-block busylight.service; \
+	elif [ "${OS}" = "Darwin" ]; then \
+	    launchctl stop  com.engelschall.busylight; \
+	    launchctl start com.engelschall.busylight; \
+	fi
 
 stop:
-	sudo systemctl stop busylight.service
+	@echo "++ stopping service"; \
+	if [ "${OS}" = "Linux" ]; then \
+	    sudo systemctl stop busylight.service; \
+	elif [ "${OS}" = "Darwin" ]; then \
+	    launchctl stop com.engelschall.busylight; \
+	fi
 
 logs:
-	journalctl -f -u busylight
+	@echo "++ showing logs of service"; \
+	if [ "${OS}" = "Linux" ]; then \
+	    journalctl -f -u busylight; \
+	elif [ "${OS}" = "Darwin" ]; then \
+	    tail -f busylight.log; \
+	fi
 
 seal:
 	sudo raspi-config nonint enable_bootro

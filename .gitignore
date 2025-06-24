@@ -1,3 +1,7 @@
 node_modules
 package-lock.json
 busylight.service
+busylight.plist
+busylight-api.js
+busylight.js
+busylight.log

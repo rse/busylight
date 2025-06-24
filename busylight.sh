@@ -22,6 +22,14 @@ case "$0" in
         ;;
 esac
 
+#   ensure that Node can be found
+PATH="/bin:/usr/bin:/sbin:/usr/sbin"
+for dir in /usr/local/bin /opt/local/bin; do
+    if [ -d $dir ]; then
+        PATH="$dir:$PATH"
+    fi
+done
+
 #   pass-through execution
 cd $basedir || exit $?
 exec node busylight.js ${1+"$@"}
