@@ -51,7 +51,7 @@ node busylight.js
 ```
 http://<ip-address>:<tcp-port>
     /<device-name>
-    /{off,ok,info,warning,error}
+    /{off,ok,info1,info2,info3,warning,error}
     [/{steady,blink}
     [/{0,<duration>}
     [/quiet]]]
