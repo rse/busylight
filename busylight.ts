@@ -237,16 +237,34 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
         }
         else if (state === "ok") {
             changeProgram(device, {
-                rgb:       [ 0x00, 0x66, 0x00 ],
+                rgb:       [ 0x00, 0x66, 0x00 ], /* GREEN */
                 type:      type,
                 duration:  duration,
                 tone:      audio === "audible" ? "Instant Message 2" : "",
                 volume:    audio === "audible" ? 0.5 : 0
             })
         }
-        else if (state === "info") {
+        else if (state === "info1") {
             changeProgram(device, {
-                rgb:       [ 0x00, 0x33, 0x99 ],
+                rgb:       [ 0x00, 0x33, 0x99 ], /* BLUE */
+                type:      type,
+                duration:  duration,
+                tone:      audio === "audible" ? "Instant Message 2" : "",
+                volume:    audio === "audible" ? 0.5 : 0
+            })
+        }
+        else if (state === "info2") {
+            changeProgram(device, {
+                rgb:       [ 0x66, 0x00, 0x66 ], /* PURPLE */
+                type:      type,
+                duration:  duration,
+                tone:      audio === "audible" ? "Instant Message 2" : "",
+                volume:    audio === "audible" ? 0.5 : 0
+            })
+        }
+        else if (state === "info3") {
+            changeProgram(device, {
+                rgb:       [ 0x99, 0x99, 0x99 ], /* WHITE */
                 type:      type,
                 duration:  duration,
                 tone:      audio === "audible" ? "Instant Message 2" : "",
@@ -255,7 +273,7 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
         }
         else if (state === "warning") {
             changeProgram(device, {
-                rgb:       [ 0x99, 0x33, 0x00 ],
+                rgb:       [ 0x99, 0x33, 0x00 ], /* YELLOW */
                 type:      type,
                 duration:  duration,
                 tone:      audio === "audible" ? "Quiet" : "",
@@ -264,7 +282,7 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
         }
         else if (state === "error") {
             changeProgram(device, {
-                rgb:       [ 0xcc, 0x00, 0x00 ],
+                rgb:       [ 0xcc, 0x00, 0x00 ], /* RED */
                 type:      type,
                 duration:  duration,
                 tone:      audio === "audible" ? "Quiet" : "",
