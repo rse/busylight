@@ -12,6 +12,7 @@ import Inert          from "@hapi/inert"
 import moment         from "moment"
 import chalk          from "chalk"
 import UUID           from "pure-uuid"
+import USB            from "usb"
 
 /*  import internal dependencies  */
 import { BusyLight }  from "./busylight-api.js"
@@ -64,9 +65,9 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
             .describe("l", "level for console logging (\"ERROR\", \"WARNING\", \"INFO\", \"DEBUG\"")
         .string("a").nargs("a", 1).alias("a", "http-addr").default("a", "0.0.0.0")
             .describe("a", "HTTP listen IP address")
-        .number("p").nargs("p", 1).alias("p", "http-port").default("p", 8080)
+        .number("p").nargs("p", 1).alias("p", "http-port").default("p", 8765)
             .describe("p", "HTTP listen TCP port")
-        .array("d").alias("d", "device").default("d", []) 
+        .array("d").alias("d", "device").default("d", [])
             .describe("d", "device name mapping")
         .version(false)
         .strict()
@@ -88,51 +89,16 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
     /*  indicate service startup  */
     log("INFO", `starting BusyLight ${pkg.version} <${pkg.homepage}>`)
 
-    /*  determine devices  */
-    const devices = BusyLight.devices()
-    if (devices.length === 0) {
-        log("ERROR", "no busylight USB device found")
-        process.exit(1)
-    }
-    for (const device of devices)
-        log("INFO", `found busylight device: serial: ${device.serialNumber}, model: ${device.manufacturer} ${device.product}`)
+    /*  central busylight device connections  */
+    const busylight: { [ name: string ]: BusyLight } = {}
 
-    /*  map devices  */
-    let busylight: { [ name: string ]: BusyLight } = {}
+    /*  sanity check device id mappings  */
     if (typeof args.device === "object" && args.device instanceof Array && args.device.length > 0) {
-        /*  identify device by name  */
         for (const spec of args.device) {
             const m = String(spec).match(/^(.+?):(.+)$/)
             if (m === null)
                 throw new Error(`invalid device specification: ${spec}`)
-            const [ , id, serial ] = m
-            let found = false
-            for (const device of devices) {
-                if (device.serialNumber === serial) {
-                    log("INFO", `using busylight device: id: ${id}, serial: ${device.serialNumber}`)
-                    busylight[id] = new BusyLight(device)
-                    found = true
-                    break
-                }
-            }
-            if (!found)
-                throw new Error(`device not found: ${serial}`)
         }
-    }
-    else {
-        /*  identify device by serial number */
-        for (const device of devices) {
-            const uuid = new UUID(3, "ns:URL", `busylight:${device.serialNumber}`)
-            const id = uuid.fold(3).map((d) => d.toString(16).padStart(2, "0").toUpperCase()).join("")
-            log("INFO", `using busylight device: id: ${id}, serial: ${device.serialNumber}`)
-            busylight[id] = new BusyLight(device)
-        }
-    }
-
-    /*  connect to all devices  */
-    for (const device of Object.keys(busylight)) {
-        busylight[device].connect()
-        busylight[device].off()
     }
 
     /*  global duration timer  */
@@ -160,7 +126,65 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
         intervalStop(device)
         interval[device] = setInterval(cb, delay)
     }
-   
+
+    /*  determine unique identifier of device  */
+    const deviceId = (serial: string) => {
+        let id = ""
+        if (typeof args.device === "object" && args.device instanceof Array && args.device.length > 0) {
+            /*  identify device by configured id  */
+            for (const spec of args.device) {
+                const m = String(spec).match(/^(.+?):(.+)$/)
+                if (m === null)
+                    continue
+                const [ , _id, _serial ] = m
+                if (serial === m[2]) {
+                    id = m[1]
+                    break
+                }
+            }
+        }
+        if (id === "") {
+            /*  fallback: identify device by serial number  */
+            const uuid = new UUID(3, "ns:URL", `busylight:${serial}`)
+            id = uuid.fold(3).map((d) => d.toString(16).padStart(2, "0").toUpperCase()).join("")
+        }
+        return id
+    }
+
+    /*  update busylight device connections  */
+    const updateDevices = async () => {
+        /*  determine current devices  */
+        const devices = BusyLight.devices()
+
+        /*  add new devices  */
+        const found: { [ name: string ]: boolean } = {}
+        for (const device of devices) {
+            const id = deviceId(device.serialNumber)
+            found[id] = true
+            if (!busylight[id]) {
+                log("INFO", `adding busylight device: id: ${id}, serial: ${device.serialNumber}, model: ${device.manufacturer} ${device.product}`)
+                busylight[id] = new BusyLight(device)
+                busylight[id].connect()
+                busylight[id].off()
+            }
+        }
+
+        /*  remove obsolete devices  */
+        for (const id of Object.keys(busylight)) {
+            if (!found[id]) {
+                log("INFO", `removing busylight device: id: ${id}`)
+                delete busylight[id]
+            }
+        }
+    }
+
+    /*  initially update devices already once  */
+    await updateDevices()
+
+    /*  regularly update devices on USB device attach/detach events  */
+    USB.usb.on("attach", (device) => { updateDevices() })
+    USB.usb.on("detach", (device) => { updateDevices() })
+
     /*  internal program configuration  */
     type Program = {
         rgb:      number[],
@@ -292,7 +316,7 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
         else
             log("WARNING", `invalid requested state "${state}"`)
     }
-   
+
     /*  establish HTTP/REST service endpoints  */
     log("INFO", `starting REST API: http://${args.httpAddr}:${args.httpPort}` +
         `/<device>/{off,ok,info,warning,error}[/{steady,blink}[/{0,<duration>}[/quiet]]]`)
