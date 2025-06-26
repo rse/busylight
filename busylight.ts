@@ -164,6 +164,9 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
             if (!busylight[id]) {
                 log("INFO", `adding busylight device: id: ${id}, serial: ${device.serialNumber}, model: ${device.manufacturer} ${device.product}`)
                 busylight[id] = new BusyLight(device)
+                busylight[id].onError((error: any) => {
+                    log("WARNING", `busylight [${id}]: ${error}`)
+                })
                 busylight[id].connect()
                 busylight[id].off()
             }

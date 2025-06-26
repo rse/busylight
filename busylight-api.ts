@@ -4,9 +4,11 @@
 **  - add "unclean" flag to "disconnect" method
 **  - fix API typo: "intesity" -> "intensity"
 **  - fix TypeScript problems
+**  - provide EventEmitter functionality for emitting errors
 */
 
-import * as HID from "node-hid"
+import { EventEmitter } from "node:events"
+import * as HID         from "node-hid"
 
 interface BusyLightDevice {
     vendorId: number
@@ -55,6 +57,7 @@ class BusyLight {
     private static STEPS_COUNT = 7
     private static VENDORID = 0x27BB
     private static PRODUCTS = [0x3BCA, 0x3BCB, 0x3BCC, 0x3BCD, 0x3BCE, 0x3BCF]
+    private eventEmitter: EventEmitter = new EventEmitter()
 
     private static CMDS = {
         keepalive:  0x80,
@@ -202,6 +205,10 @@ class BusyLight {
         this._device = device
     }
 
+    public onError (callback: (...args: any[]) => void) {
+        this.eventEmitter.addListener("error", callback)
+    }
+
     private _connect(): void {
         try {
             this._hid = new HID.HID(this._device!.path)
@@ -210,7 +217,7 @@ class BusyLight {
                 this._response = Array.from(data)
             })
             this._hid.on('error', (error: any) => {
-                /*  FIXME: pass-through to application?  */
+                this.eventEmitter.emit("error", error)
             })
             this._send(this._steps)
         } catch (ignore) {
