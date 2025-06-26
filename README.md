@@ -45,12 +45,12 @@ node busylight.js
     [-l|--log-level <level>]
     [-a|--http-addr <ip-address>]
     [-p|--http-port <tcp-port>]
-    [-d|--device <device-name>:<device-serial>]
+    [-d|--device <device-id>:<device-serial>]
 ```
 
 ```
 http://<ip-address>:<tcp-port>
-    /<device-name>
+    /<device-id>[+<device-id>[...]]
     /{off,ok,info1,info2,info3,warning,error}
     [/{steady,blink}
     [/{0,<duration>}

@@ -329,7 +329,7 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
 
     /*  establish HTTP/REST service endpoints  */
     log("INFO", `starting REST API: http://${args.httpAddr}:${args.httpPort}` +
-        `/<device>/{off,ok,info1,info2,info3,warning,error}[/{steady,blink}[/{0,<duration>}[/quiet]]]`)
+        `/<device>[+<device>[...]]/{off,ok,info1,info2,info3,warning,error}[/{steady,blink}[/{0,<duration>}[/quiet]]]`)
     const server = new Server({
         address: args.httpAddr,
         port:    args.httpPort
