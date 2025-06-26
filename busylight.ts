@@ -250,7 +250,7 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
             })
         }
     }
-    const changeState = (device: string, state: string, type = "steady", duration = 0, audio = "audible") => {
+    const changeStateSingle = (device: string, state: string, type = "steady", duration = 0, audio = "audible") => {
         log("INFO", `change: device: ${device}, state: ${state}, type: ${type}, duration: ${duration === 0 ? "none" : duration}`)
         if (busylight[device] === undefined) {
             log("WARNING", `invalid requested device "${device}"`)
@@ -322,10 +322,14 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
         else
             log("WARNING", `invalid requested state "${state}"`)
     }
+    const changeState = (devices: string, state: string, type = "steady", duration = 0, audio = "audible") => {
+        for (const device of devices.split(/\+/))
+            changeStateSingle(device, state, type, duration, audio)
+    }
 
     /*  establish HTTP/REST service endpoints  */
     log("INFO", `starting REST API: http://${args.httpAddr}:${args.httpPort}` +
-        `/<device>/{off,ok,info,warning,error}[/{steady,blink}[/{0,<duration>}[/quiet]]]`)
+        `/<device>/{off,ok,info1,info2,info3,warning,error}[/{steady,blink}[/{0,<duration>}[/quiet]]]`)
     const server = new Server({
         address: args.httpAddr,
         port:    args.httpPort
