@@ -209,6 +209,9 @@ class BusyLight {
                 if (!data) return
                 this._response = Array.from(data)
             })
+            this._hid.on('error', (error: any) => {
+                /*  FIXME: pass-through to application?  */
+            })
             this._send(this._steps)
         } catch (ignore) {
             this._hid = null

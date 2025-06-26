@@ -173,6 +173,9 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
         for (const id of Object.keys(busylight)) {
             if (!found[id]) {
                 log("INFO", `removing busylight device: id: ${id}`)
+                intervalStop(id)
+                timerStop(id)
+                await new Promise((resolve, reject) => setTimeout(resolve, 1000))
                 delete busylight[id]
             }
         }
