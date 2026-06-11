@@ -188,8 +188,8 @@ const log = (level: "ERROR" | "WARNING" | "INFO" | "DEBUG", msg: string, data = 
     await updateDevices()
 
     /*  regularly update devices on USB device attach/detach events  */
-    USB.usb.on("attach", (device) => { updateDevices() })
-    USB.usb.on("detach", (device) => { updateDevices() })
+    USB.usb.addEventListener("connect",    (event) => { updateDevices() })
+    USB.usb.addEventListener("disconnect", (event) => { updateDevices() })
 
     /*  internal program configuration  */
     type Program = {

@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
         "outDir":                  ".",
-	"module":                  "ESNext",
-        "moduleResolution":        "Node",
+        "module":                  "ESNext",
+        "moduleResolution":        "Bundler",
         "useDefineForClassFields": true,
         "composite":               false,
         "strict":                  true,
