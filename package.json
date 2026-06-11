@@ -19,7 +19,7 @@
         "node-hid":     "3.3.0",
         "usb":          "3.0.0",
         "pure-uuid":    "2.0.0",
-        "@types/node":  "25.9.2",
+        "@types/node":  "25.9.3",
         "@types/yargs": "17.0.35"
     },
     "scripts": {
